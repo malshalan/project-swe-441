@@ -1,0 +1,141 @@
+/* Intentional technical debt: mixed concerns, redundant rules -- cleaned in SCRUM-9 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #f0f2f5;
+    color: #333;
+    min-height: 100vh;
+}
+
+/* --- Nav --- */
+nav {
+    background: #2c3e50;
+    color: white;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Intentional: duplicate color definition left for SCRUM-9 */
+nav { background-color: #2c3e50; }
+
+.nav-links a { color: white; margin-left: 1rem; text-decoration: none; }
+.nav-links a:hover { text-decoration: underline; }
+.nav-links span { margin-left: 1rem; }
+
+/* --- Container --- */
+.container { max-width: 900px; margin: 2rem auto; padding: 0 1rem; }
+
+/* --- Auth --- */
+.auth-box {
+    max-width: 400px;
+    margin: 3rem auto;
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.auth-box h2 { margin-bottom: 1.5rem; color: #2c3e50; }
+
+.form-group { margin-bottom: 1rem; }
+.form-group label { display: block; margin-bottom: 0.3rem; font-weight: 500; }
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 0.6rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+.form-group input:focus,
+.form-group select:focus { outline: none; border-color: #3498db; }
+
+/* --- Buttons --- */
+.btn {
+    padding: 0.6rem 1.2rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+.btn-primary { background: #3498db; color: white; width: 100%; }
+.btn-primary:hover { background: #2980b9; }
+.btn-success { background: #27ae60; color: white; }
+.btn-success:hover { background: #219150; }
+.btn-danger { background: #e74c3c; color: white; }
+.btn-danger:hover { background: #c0392b; }
+.btn-sm { padding: 0.3rem 0.7rem; font-size: 0.85rem; }
+.link-btn { background: none; border: none; color: #3498db; cursor: pointer; font-size: 1rem; }
+.link-btn:hover { text-decoration: underline; }
+
+/* --- GPA Banner --- */
+.gpa-banner {
+    background: white;
+    padding: 1.2rem 1.5rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+.gpa-value { font-size: 2.5rem; font-weight: bold; color: #2c3e50; }
+.gpa-label { color: #666; font-size: 0.9rem; }
+
+/* --- Grade Form --- */
+.grade-form {
+    background: white;
+    padding: 1.2rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+.grade-form h3 { margin-bottom: 1rem; color: #2c3e50; }
+.grade-form-row { display: flex; gap: 1rem; align-items: flex-end; }
+.grade-form-row .form-group { flex: 1; margin-bottom: 0; }
+
+/* --- Grade Table --- */
+.grade-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+}
+.grade-table th {
+    background: #2c3e50;
+    color: white;
+    padding: 0.75rem 1rem;
+    text-align: left;
+    font-weight: 600;
+}
+.grade-table td { padding: 0.75rem 1rem; border-bottom: 1px solid #eee; }
+.grade-table tr:last-child td { border-bottom: none; }
+.grade-table tr:hover td { background: #f8f9fa; }
+
+.letter-A { color: #155724; font-weight: bold; }
+.letter-B { color: #004085; font-weight: bold; }
+.letter-C { color: #856404; font-weight: bold; }
+.letter-D { color: #7b2d00; font-weight: bold; }
+.letter-F { color: #721c24; font-weight: bold; }
+
+/* --- Alerts --- */
+.alert { padding: 0.75rem; border-radius: 4px; margin-bottom: 1rem; }
+.alert-error { background: #fee2e2; color: #991b1b; }
+.alert-success { background: #dcfce7; color: #166534; }
+
+.empty-state { text-align: center; color: #999; padding: 3rem 0; }
+
+/* --- Mobile nav bug (intentional) -- fixed in SCRUM-6 area --- */
+@media (max-width: 600px) {
+    nav .nav-links { overflow: hidden; }
+}
