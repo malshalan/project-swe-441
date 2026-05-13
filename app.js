@@ -18,10 +18,11 @@ function escapeHtml(str) {
     return div.innerHTML;
 }
 
-// Intentional bug: no client-side validation -- fixed in SCRUM-1
 async function login() {
-    const username = document.getElementById('username').value;
+    const username = document.getElementById('username').value.trim();
     const password = document.getElementById('password').value;
+    if (!username) { showAlert('Username is required'); return; }
+    if (!password) { showAlert('Password is required'); return; }
     const data = await api('api/auth.php', { action: 'login', username, password });
     if (data.success) { state.user = data.username; renderGrades(); }
     else { showAlert(data.error || 'Login failed'); }
