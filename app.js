@@ -88,14 +88,17 @@ function renderGrades() {
     loadGrades();
 }
 
-// Intentional: options built without escaping -- XSS risk, fixed in SCRUM-5
 async function loadCoursesForSelect() {
     const data = await api('api/grades.php?action=courses');
     const sel  = document.getElementById('course-select');
     if (!sel) return;
-    sel.innerHTML = (data.courses || []).map(c =>
-        '<option value="' + c.id + '">' + c.name + ' (' + c.code + ')</option>'
-    ).join('');
+    sel.textContent = '';
+    (data.courses || []).forEach(c => {
+        const opt = document.createElement('option');
+        opt.value = c.id;
+        opt.textContent = c.name + ' (' + c.code + ')';
+        sel.appendChild(opt);
+    });
 }
 
 async function loadGrades() {
@@ -111,22 +114,60 @@ function letterGrade(score) {
     return 'F';
 }
 
-// Intentional: content not escaped -- XSS risk, fixed in SCRUM-5
 function renderGradeTable(grades, gpa) {
-    document.getElementById('gpa-section').innerHTML =
-        '<div class="gpa-banner"><div class="gpa-value">' + gpa + '</div>' +
-        '<div class="gpa-label">Current GPA (4.0 scale)</div></div>';
+    const gpaSec = document.getElementById('gpa-section');
+    gpaSec.textContent = '';
+    const banner = document.createElement('div');
+    banner.className = 'gpa-banner';
+    const valEl = document.createElement('div');
+    valEl.className = 'gpa-value';
+    valEl.textContent = gpa;
+    const lblEl = document.createElement('div');
+    lblEl.className = 'gpa-label';
+    lblEl.textContent = 'Current GPA (4.0 scale)';
+    banner.appendChild(valEl);
+    banner.appendChild(lblEl);
+    gpaSec.appendChild(banner);
+
     const el = document.getElementById('grade-list');
-    if (!grades.length) { el.innerHTML = '<p class="empty-state">No grades yet. Add one above!</p>'; return; }
-    el.innerHTML = '<table class="grade-table"><thead><tr>' +
-        '<th>Course</th><th>Code</th><th>Score</th><th>Grade</th><th>Credits</th><th></th>' +
-        '</tr></thead><tbody>' +
-        grades.map(g => {
-            const letter = g.letter_grade || letterGrade(g.score);
-            return '<tr><td>' + g.course_name + '</td><td>' + g.code + '</td><td>' + g.score +
-                '</td><td class="letter-' + letter + '">' + letter + '</td><td>' + g.credit_hours +
-                '</td><td><button class="btn btn-sm btn-danger" onclick="deleteGrade(' + g.id + ')">Remove</button></td></tr>';
-        }).join('') + '</tbody></table>';
+    el.textContent = '';
+    if (!grades.length) {
+        const p = document.createElement('p');
+        p.className = 'empty-state';
+        p.textContent = 'No grades yet. Add one above!';
+        el.appendChild(p);
+        return;
+    }
+    const table = document.createElement('table');
+    table.className = 'grade-table';
+    table.innerHTML = '<thead><tr><th>Course</th><th>Code</th><th>Score</th><th>Grade</th><th>Credits</th><th></th></tr></thead>';
+    const tbody = document.createElement('tbody');
+    grades.forEach(g => {
+        const letter = g.letter_grade || letterGrade(g.score);
+        const tr = document.createElement('tr');
+        [g.course_name, g.code, g.score].forEach(val => {
+            const td = document.createElement('td');
+            td.textContent = val;
+            tr.appendChild(td);
+        });
+        const gradeTd = document.createElement('td');
+        gradeTd.className = 'letter-' + letter;
+        gradeTd.textContent = letter;
+        tr.appendChild(gradeTd);
+        const creditsTd = document.createElement('td');
+        creditsTd.textContent = g.credit_hours;
+        tr.appendChild(creditsTd);
+        const actionTd = document.createElement('td');
+        const btn = document.createElement('button');
+        btn.className = 'btn btn-sm btn-danger';
+        btn.textContent = 'Remove';
+        btn.addEventListener('click', () => deleteGrade(g.id));
+        actionTd.appendChild(btn);
+        tr.appendChild(actionTd);
+        tbody.appendChild(tr);
+    });
+    table.appendChild(tbody);
+    el.appendChild(table);
 }
 
 async function addGrade() {

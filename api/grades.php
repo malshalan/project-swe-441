@@ -13,53 +13,52 @@ $student_id = $_SESSION['user_id'];
 $action     = $_GET['action'] ?? '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET' && $action === 'courses') {
-    $db     = getDB();
-    $result = $db->query('SELECT * FROM courses ORDER BY name ASC');
+    $db      = getDB();
+    $result  = $db->query('SELECT * FROM courses ORDER BY name ASC');
     $courses = [];
     while ($row = $result->fetch_assoc()) {
         $courses[] = $row;
     }
     echo json_encode(['courses' => $courses]);
-    $db->close();
 
 } elseif ($_SERVER['REQUEST_METHOD'] === 'GET' && $action === '') {
-    $db = getDB();
-    // Intentional: no prepared statement -- fixed in SCRUM-5
-    $result = $db->query("SELECT g.*, c.name AS course_name, c.code, c.credit_hours
+    $db   = getDB();
+    $stmt = $db->prepare('SELECT g.*, c.name AS course_name, c.code, c.credit_hours
                           FROM grades g JOIN courses c ON g.course_id = c.id
-                          WHERE g.student_id = $student_id
-                          ORDER BY c.name ASC");
-    $grades = [];
-    while ($row = $result->fetch_assoc()) {
-        $grades[] = $row;
-    }
+                          WHERE g.student_id = ?
+                          ORDER BY c.name ASC');
+    $stmt->bind_param('i', $student_id);
+    $stmt->execute();
+    $grades = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    $stmt->close();
 
-    // Intentional bug: division by zero when no grades exist -- fixed in SCRUM-6
     $total_points  = 0;
     $total_credits = 0;
     foreach ($grades as $g) {
         $total_points  += ($g['score'] / 25) * $g['credit_hours'];
         $total_credits += $g['credit_hours'];
     }
+    // Intentional bug: division by zero when no grades exist -- fixed in SCRUM-16
     $gpa = $total_points / $total_credits;
 
     echo json_encode(['grades' => $grades, 'gpa' => round($gpa, 2)]);
-    $db->close();
 
 } elseif ($_SERVER['REQUEST_METHOD'] === 'POST' && $action === 'add') {
-    $course_id = $_POST['course_id'] ?? '';
-    $score     = $_POST['score'] ?? '';
+    $course_id = intval($_POST['course_id'] ?? 0);
+    $score     = intval($_POST['score'] ?? 0);
     $db        = getDB();
-    // Intentional: no prepared statement -- fixed in SCRUM-5
-    $db->query("INSERT INTO grades (student_id, course_id, score)
-                VALUES ($student_id, $course_id, $score)");
+    $stmt      = $db->prepare('INSERT INTO grades (student_id, course_id, score) VALUES (?, ?, ?)');
+    $stmt->bind_param('iii', $student_id, $course_id, $score);
+    $stmt->execute();
     echo json_encode(['success' => true, 'id' => $db->insert_id]);
-    $db->close();
+    $stmt->close();
 
 } elseif ($_SERVER['REQUEST_METHOD'] === 'POST' && $action === 'delete') {
-    $id = intval($_POST['id']);
-    $db = getDB();
-    $db->query("DELETE FROM grades WHERE id = $id AND student_id = $student_id");
+    $id   = intval($_POST['id']);
+    $db   = getDB();
+    $stmt = $db->prepare('DELETE FROM grades WHERE id = ? AND student_id = ?');
+    $stmt->bind_param('ii', $id, $student_id);
+    $stmt->execute();
     echo json_encode(['success' => true]);
-    $db->close();
+    $stmt->close();
 }
