@@ -72,11 +72,48 @@ function renderRegister() {
         '<p style="margin-top:1rem;text-align:center;">Have an account? <button class="link-btn" onclick="renderLogin()">Login</button></p></div>';
 }
 
+function renderCourses() {
+    state.view = 'courses';
+    document.getElementById('app').innerHTML =
+        '<nav><h1>Grade Tracker</h1><div class="nav-links">' +
+        '<span>Hello, ' + escapeHtml(state.user) + '</span>' +
+        '<button class="link-btn nav-btn" onclick="renderGrades()">My Grades</button>' +
+        '<button class="link-btn nav-btn" onclick="renderCourses()">Courses</button>' +
+        '<a href="#" onclick="logout()">Logout</a></div></nav>' +
+        '<div class="container"><h2 class="section-title">Available Courses</h2>' +
+        '<div id="course-grid"></div></div>';
+    api('api/grades.php?action=courses').then(data => {
+        const grid = document.getElementById('course-grid');
+        if (!grid) return;
+        grid.className = 'course-grid';
+        grid.textContent = '';
+        (data.courses || []).forEach(c => {
+            const card = document.createElement('div');
+            card.className = 'course-card';
+            const name = document.createElement('div');
+            name.className = 'course-name';
+            name.textContent = c.name;
+            const code = document.createElement('div');
+            code.className = 'course-code';
+            code.textContent = c.code;
+            const credits = document.createElement('div');
+            credits.className = 'course-credits';
+            credits.textContent = c.credit_hours + ' credit hours';
+            card.appendChild(name);
+            card.appendChild(code);
+            card.appendChild(credits);
+            grid.appendChild(card);
+        });
+    });
+}
+
 function renderGrades() {
     state.view = 'grades';
     document.getElementById('app').innerHTML =
         '<nav><h1>Grade Tracker</h1><div class="nav-links">' +
         '<span>Hello, ' + escapeHtml(state.user) + '</span>' +
+        '<button class="link-btn nav-btn" onclick="renderGrades()">My Grades</button>' +
+        '<button class="link-btn nav-btn" onclick="renderCourses()">Courses</button>' +
         '<a href="#" onclick="logout()">Logout</a></div></nav>' +
         '<div class="container"><div id="alert"></div><div id="gpa-section"></div>' +
         '<div class="grade-form"><h3>Add Grade</h3><div class="grade-form-row">' +

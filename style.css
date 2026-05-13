@@ -135,6 +135,34 @@ nav { background-color: #1e3a5f; }
 
 .empty-state { text-align: center; color: #999; padding: 3rem 0; }
 
+/* --- Course Listing --- */
+.section-title { margin: 1.5rem 0 1rem; color: #1e3a5f; font-size: 1.3rem; }
+
+.course-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.course-card {
+    background: white;
+    border-radius: 8px;
+    padding: 1.5rem 1rem;
+    text-align: center;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    transition: transform 0.15s, box-shadow 0.15s;
+}
+.course-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(30,58,95,0.15);
+}
+
+.course-name { font-weight: bold; color: #1e3a5f; margin-bottom: 0.3rem; }
+.course-code { font-size: 0.85rem; color: #555; margin-bottom: 0.25rem; }
+.course-credits { font-size: 0.8rem; color: #888; }
+
+.nav-btn { color: rgba(255,255,255,0.85); font-size: 0.9rem; margin-left: 0.75rem; }
+
 /* --- Mobile nav bug (intentional) -- fixed in SCRUM-6 area --- */
 @media (max-width: 600px) {
     nav .nav-links { overflow: hidden; }
