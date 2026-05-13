@@ -12,6 +12,15 @@ if (!isset($_SESSION['user_id'])) {
 $student_id = $_SESSION['user_id'];
 $action     = $_GET['action'] ?? '';
 
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $token = $_POST['csrf_token'] ?? $_SERVER['HTTP_X_CSRF_TOKEN'] ?? '';
+    if (!hash_equals($_SESSION['csrf_token'] ?? '', $token)) {
+        http_response_code(403);
+        echo json_encode(['error' => 'Invalid CSRF token']);
+        exit;
+    }
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'GET' && $action === 'courses') {
     $db      = getDB();
     $result  = $db->query('SELECT * FROM courses ORDER BY name ASC');

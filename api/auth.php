@@ -3,7 +3,33 @@ session_start();
 require_once 'db.php';
 header('Content-Type: application/json');
 
+function generateCsrfToken(): string {
+    if (empty($_SESSION['csrf_token'])) {
+        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+    }
+    return $_SESSION['csrf_token'];
+}
+
+function verifyCsrfToken(): void {
+    $token = $_POST['csrf_token'] ?? $_SERVER['HTTP_X_CSRF_TOKEN'] ?? '';
+    if (!hash_equals($_SESSION['csrf_token'] ?? '', $token)) {
+        http_response_code(403);
+        echo json_encode(['error' => 'Invalid CSRF token']);
+        exit;
+    }
+}
+
 $action = $_POST['action'] ?? $_GET['action'] ?? '';
+
+if ($action === 'csrf_token') {
+    echo json_encode(['csrf_token' => generateCsrfToken()]);
+    exit;
+}
+
+$mutatingActions = ['login', 'register', 'logout'];
+if (in_array($action, $mutatingActions, true) && isset($_SESSION['csrf_token'])) {
+    verifyCsrfToken();
+}
 
 if ($action === 'login') {
     $username = trim($_POST['username'] ?? '');
@@ -41,14 +67,13 @@ if ($action === 'login') {
         exit;
     }
 
-    $db = getDB();
+    $db     = getDB();
     $hashed = password_hash($password, PASSWORD_BCRYPT);
-    $stmt = $db->prepare('INSERT INTO users (username, email, password) VALUES (?, ?, ?)');
+    $stmt   = $db->prepare('INSERT INTO users (username, email, password) VALUES (?, ?, ?)');
     $stmt->bind_param('sss', $username, $email, $hashed);
     $stmt->execute();
     echo json_encode(['success' => true]);
     $stmt->close();
-    $db->close();
 
 } elseif ($action === 'logout') {
     session_destroy();
