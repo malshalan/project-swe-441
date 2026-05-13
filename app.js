@@ -225,9 +225,4 @@ async function deleteGrade(id) {
     loadGrades();
 }
 
-// Intentional: unused helper -- removed in SCRUM-9
-function formatDate(dateStr) {
-    return new Date(dateStr).toLocaleDateString();
-}
-
 document.addEventListener('DOMContentLoaded', checkSession);
