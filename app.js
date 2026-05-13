@@ -116,6 +116,7 @@ function renderGrades() {
         '<button class="link-btn nav-btn" onclick="renderCourses()">Courses</button>' +
         '<a href="#" onclick="logout()">Logout</a></div></nav>' +
         '<div class="container"><div id="alert"></div><div id="gpa-section"></div>' +
+        '<div style="text-align:right;margin-bottom:0.75rem;"><button class="btn btn-primary" onclick="printReport()" style="width:auto;">Print / Export</button></div>' +
         '<div class="grade-form"><h3>Add Grade</h3><div class="grade-form-row">' +
         '<div class="form-group"><label>Course</label><select id="course-select"></select></div>' +
         '<div class="form-group"><label>Score (0-100)</label><input type="number" id="score-input" min="0" max="100" placeholder="e.g. 85"></div>' +
@@ -205,6 +206,10 @@ function renderGradeTable(grades, gpa) {
     });
     table.appendChild(tbody);
     el.appendChild(table);
+}
+
+function printReport() {
+    window.print();
 }
 
 async function addGrade() {
