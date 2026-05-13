@@ -29,9 +29,12 @@ async function login() {
 }
 
 async function register() {
-    const username = document.getElementById('reg-username').value;
-    const email    = document.getElementById('reg-email').value;
+    const username = document.getElementById('reg-username').value.trim();
+    const email    = document.getElementById('reg-email').value.trim();
     const password = document.getElementById('reg-password').value;
+    if (!username) { showAlert('Username is required'); return; }
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showAlert('Valid email is required'); return; }
+    if (!password) { showAlert('Password is required'); return; }
     const data = await api('api/auth.php', { action: 'register', username, email, password });
     if (data.success) { showAlert('Registered! Please login.', 'success'); renderLogin(); }
     else { showAlert(data.error || 'Registration failed'); }

@@ -26,10 +26,20 @@ if ($action === 'login') {
     $db->close();
 
 } elseif ($action === 'register') {
-    // Intentional bug: no validation on fields -- fixed in SCRUM-2
-    $username = $_POST['username'] ?? '';
-    $email    = $_POST['email'] ?? '';
+    $username = trim($_POST['username'] ?? '');
+    $email    = trim($_POST['email'] ?? '');
     $password = $_POST['password'] ?? '';
+
+    if (empty($username) || empty($email) || empty($password)) {
+        http_response_code(400);
+        echo json_encode(['error' => 'All fields are required']);
+        exit;
+    }
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        http_response_code(400);
+        echo json_encode(['error' => 'Invalid email address']);
+        exit;
+    }
 
     $db = getDB();
     $hashed = password_hash($password, PASSWORD_BCRYPT);
