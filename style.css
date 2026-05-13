@@ -163,6 +163,15 @@ nav { background-color: #1e3a5f; }
 
 .nav-btn { color: rgba(255,255,255,0.85); font-size: 0.9rem; margin-left: 0.75rem; }
 
+/* --- Print/Export --- */
+@media print {
+    nav, .grade-form, button, .alert { display: none !important; }
+    body { background: white; }
+    .container { max-width: 100%; margin: 0; padding: 0; }
+    .grade-table { box-shadow: none; }
+    .gpa-banner { box-shadow: none; border: 1px solid #ccc; }
+}
+
 /* --- Mobile nav bug (intentional) -- fixed in SCRUM-6 area --- */
 @media (max-width: 600px) {
     nav .nav-links { overflow: hidden; }
