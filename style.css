@@ -1,4 +1,3 @@
-/* Intentional technical debt: mixed concerns, redundant rules -- cleaned in SCRUM-9 */
 * {
     margin: 0;
     padding: 0;
@@ -22,8 +21,6 @@ nav {
     align-items: center;
 }
 
-/* Intentional: duplicate color definition left for SCRUM-9 */
-nav { background-color: #1e3a5f; }
 
 .nav-links a { color: white; margin-left: 1rem; text-decoration: none; }
 .nav-links a:hover { text-decoration: underline; }
