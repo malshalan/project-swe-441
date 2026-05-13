@@ -38,8 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && $action === 'courses') {
         $total_points  += ($g['score'] / 25) * $g['credit_hours'];
         $total_credits += $g['credit_hours'];
     }
-    // Intentional bug: division by zero when no grades exist -- fixed in SCRUM-16
-    $gpa = $total_points / $total_credits;
+    $gpa = $total_credits > 0 ? $total_points / $total_credits : 0.0;
 
     echo json_encode(['grades' => $grades, 'gpa' => round($gpa, 2)]);
 
