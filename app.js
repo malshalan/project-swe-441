@@ -1,8 +1,20 @@
-const state = { view: 'login', user: null };
+const state = { view: 'login', user: null, csrfToken: null };
+
+async function getCsrfToken() {
+    if (!state.csrfToken) {
+        const res  = await fetch('api/auth.php?action=csrf_token');
+        const data = await res.json();
+        state.csrfToken = data.csrf_token;
+    }
+    return state.csrfToken;
+}
 
 async function api(endpoint, data = null) {
     const opts = { method: data ? 'POST' : 'GET' };
-    if (data) opts.body = new URLSearchParams(data);
+    if (data) {
+        const token = await getCsrfToken();
+        opts.body = new URLSearchParams({ ...data, csrf_token: token });
+    }
     const res = await fetch(endpoint, opts);
     return res.json();
 }
